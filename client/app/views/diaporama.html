@@ -1,0 +1,6 @@
+  <!-- Wrapper for slides -->
+  <uib-carousel active="0" interval="7000" no-wrap="false" template-url="views/slideshow.html">
+    <uib-slide class="mpo-photo-outer" style="background-image:url('{{photo.file}}');" ng-repeat="photo in currentPhotos track by photo.id" index="photo.id">
+      <div class="fill mpo-photo-inner"/>
+    </uib-slide>
+  </uib-carousel>
