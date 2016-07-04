@@ -52,6 +52,16 @@ angular
         controller: 'SipCtrl',
         controllerAs: 'sip'
       })
+      .when('/chat', {
+        templateUrl: 'views/chat.html',
+        controller: 'ChatCtrl',
+        controllerAs: 'chat'
+      })
+      .when('/standaloneChat', {
+        templateUrl: 'views/standalonechat.html',
+        controller: 'StandalonechatCtrl',
+        controllerAs: 'standaloneChat'
+      })
       .otherwise({
         redirectTo: '/'
       });

@@ -32,7 +32,7 @@ angular.module('elioBoxClientApp')
         $window.location.href='#/';
     };
     var goTo = function (){
-        $window.location.href='#/photo/'+$rootScope.currentPhotos[$rootScope.selectedOne %  $rootScope.currentPhotos.length].file;
+        $window.location.href='#/photo/'+$rootScope.currentPhotos[$rootScope.selectedOne %  $rootScope.currentPhotos.length].id;
     };
       
       

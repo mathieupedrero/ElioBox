@@ -1,5 +1,5 @@
 <div class="container">
     <div class="row">
-        <span  class="col-xs-2" ng-repeat="(index,photo) in currentPhotos"><a href="#/photo/{{photo.file}}" ng-class="{'mpo-selected': (selectedOne % currentPhotos.length) === {{index}}}" ><img id="photo-{{index}}" class="img-thumbnail" src="{{photo.thumbnail}}" /></a></span>
+        <span  class="col-xs-4" ng-repeat="(index,photo) in currentPhotos"><a href="#/photo/{{photo.id}}" ng-class="{'mpo-selected': (selectedOne % currentPhotos.length) === {{index}}}" ><img id="photo-{{index}}" class="img-thumbnail" src="{{photo.thumbnail}}" /></a></span>
     </div>
 </div>

@@ -8,10 +8,24 @@
  * Controller of the elioBoxClientApp
  */
 angular.module('elioBoxClientApp')
-  .controller('SipCtrl', function () {
-    this.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+  .controller('SipCtrl', ["$rootScope","$window",function ($rootScope,$window) {
+    var goBack = function (){
+        $window.location.href='#/';
+    };
+    var select = function (){
+        var button = $("#appearin").contents().find('.primary-button');
+        button.click();
+    };
+    
+    // at the bottom of your controller
+    var init = function () {
+        var button = $("#appearin").contents().find('.primary-button');
+        button.click();
+        $rootScope.cecCallbacks={
+            'exit' : goBack,
+            'select' : select
+        }
+    };
+    // and fire it after definition
+    init();
+  }]);

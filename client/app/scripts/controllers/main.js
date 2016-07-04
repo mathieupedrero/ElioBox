@@ -12,9 +12,10 @@ angular.module('elioBoxClientApp')
     var options = [
       'diaporama',
       'photos',
-      'sip'
+      'standaloneChat'
     ];
     $scope.selectedOne = 0;
+      $scope.version=elioboxVersion;
     var moveRight = function (){
         $scope.selectedOne = ($scope.selectedOne + 1) % options.length
     };

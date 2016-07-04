@@ -22,6 +22,23 @@
 
 
     <div class="container fill" ng-view=""></div>
+      
+      <script>
+      var elioboxVersion="###BUILD_TAG###";
+      var build_tag="BUILD:"+elioboxVersion;
+      </script>
+      
+      <script>
+      if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+    // registration worked
+    console.log('Registration succeeded. Scope is ' + reg.scope);
+  }).catch(function(error) {
+    // registration failed
+    console.log('Registration failed with ' + error);
+  });
+};
+      </script>
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -52,6 +69,7 @@
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="scripts/webrtc-adapter.js"></script>
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
         <script src="scripts/controllers/about.js"></script>
@@ -60,6 +78,12 @@
         <script src="scripts/controllers/photo.js"></script>
         <script src="scripts/controllers/sip.js"></script>
         <script src="scripts/controllers/websockets.js"></script>
+        <script src="scripts/controllers/chat.js"></script>
+        <script src="scripts/controllers/standalonechat.js"></script>
         <!-- endbuild -->
+      
+    <footer ng-Show="loading">
+      <img src="images/hourglass.svg"/><span id="status" class="small">{{status}}</span>
+    </footer>
 </body>
 </html>

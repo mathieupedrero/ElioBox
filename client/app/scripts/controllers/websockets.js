@@ -8,17 +8,22 @@
  * Controller of the elioBoxClientApp
  */
 angular.module('elioBoxClientApp')
-  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' ,function ($websocket, $rootScope,$timeout) {
+  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", function ($websocket, $rootScope,$timeout,$route) {
+    $rootScope.loading=true;
+    $rootScope.status="Chargement en cours ...";
       
     function autoReconnectWebsocket(uri,onMessage){
         var websocket = $websocket(uri, null, {reconnectIfNotNormalClose: true});
 			
         websocket.onOpen(function(){
-            console.info('connected');
+            $rootScope.loading=false;
+            $rootScope.$apply();
         });
 
         websocket.onClose(function(){
-            console.info('close');
+            $rootScope.loading=true;
+            $rootScope.status="Chargement en cours ...";
+            $rootScope.$apply();
             $timeout(function(){autoReconnectWebsocket(uri,onMessage)},1000);
         });
 
@@ -33,9 +38,19 @@ angular.module('elioBoxClientApp')
     });
     
     autoReconnectWebsocket('ws://localhost:8888/ws-cec', function(event) {
-        var callback = $rootScope.cecCallbacks[event.data];
-        if (callback!= null){
-            callback();
+        if (event.data.substring(0, 6) == "BUILD:"){
+            console.log("connected to WS server :"+event.data);
+            if (event.data != build_tag){
+                console.log("Tags not matching !! Expected ["+build_tag+"], currently ["+event.data+"]");
+                $route.reload(true);
+            }else{
+                console.log("tags matching");
+            }
+        }else{
+            var callback = $rootScope.cecCallbacks[event.data];
+            if (callback!= null){
+                callback();
+            }
         }
     });
       

@@ -6,6 +6,7 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 from PIL import Image
+from datetime import datetime
 
 def imageSize(filename): 
   with Image.open(filename) as im:
@@ -25,9 +26,13 @@ class WebsocketWriter:
         for websocket in self.websockets:
             websocket.write_message(message)
 
+build_tag='BUILD:###BUILD_TAG###'
+www_path=sys.argv[3]
 refreshWriter=WebsocketWriter()
-imagesFolder=sys.argv[1]
-thumbnailFolder=sys.argv[2]
+relativeImagesFolder="/"+sys.argv[1]
+imagesFolder=www_path+'/'+relativeImagesFolder
+relativeThumbnailFolder="/"+sys.argv[2]
+thumbnailFolder=www_path+'/'+relativeThumbnailFolder
 thumbnailSize=720,480
 
 def compute_thumbnails_and_files():
@@ -37,13 +42,12 @@ def compute_thumbnails_and_files():
     resultList=[]
     for i,file in enumerate(files):
         size = imageSize(imagesFolder+'/'+file)
-        path = "file://"+os.path.abspath(imagesFolder+'/'+file)
-        thumbnail=thumbnailFolder+"/"+file
+        path = relativeImagesFolder+'/'+file
         try:
             im = Image.open(imagesFolder+"/"+file)
             im.thumbnail(thumbnailSize, Image.ANTIALIAS)
-            im.save(thumbnail, "JPEG")
-            thumbnailPath="file://"+os.path.abspath(thumbnail)
+            im.save(thumbnailFolder+"/"+file, "JPEG")
+            thumbnailPath=relativeThumbnailFolder+"/"+file
             resultList.append({'id':i,'width':size[0], 'height':size[1],'file':path,'thumbnail':thumbnailPath})
         except IOError:
             print("cannot create thumbnail for '%s'",file)
@@ -84,16 +88,23 @@ class CecWebsocket(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
+        self.write_message(build_tag);
         cecWriter.append(self)
 
     def on_close(self):
         cecWriter.remove(self)
 
+class MyStaticFileHandler(tornado.web.StaticFileHandler):
+    def set_extra_headers(self, path):
+        # Disable cache
+        self.set_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+
 application=tornado.web.Application([
     (r"/refresh", RefreshFolderService),
     (r"/ws-refresh", RefreshFolderWebsocket),
     (r"/cec/([a-zA-Z]+)", CecService),
-    (r"/ws-cec", CecWebsocket)
+    (r"/ws-cec", CecWebsocket),
+    (r'/(.*)', MyStaticFileHandler, {'path': www_path})
 ])
  
 if __name__ == "__main__":
