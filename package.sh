@@ -1,4 +1,10 @@
 #!/bin/bash
+if [ -z "$2" ];
+then
+        port='22'
+else
+        port=$2
+fi
 mkdir eliobox
 cd client
 grunt build
@@ -17,7 +23,6 @@ cp -r dist ../eliobox
 cd ..
 cd server
 cp server.py ../eliobox
-cp signaling.py ../eliobox
 cd ..
 cd eliobox
 pattern='s/'
@@ -31,7 +36,7 @@ sed -i $pattern dist/index.html
 sed -i $pattern dist/service-worker.js
 cd .. 
 tar zcvf eliobox.tar.gz eliobox
-scp eliobox.tar.gz $1:~
-ssh $1 'bash -s' < buildonpi.sh
+scp -P $port eliobox.tar.gz $1:~
+ssh -p $port $1 'bash -s' < buildonpi.sh
 rm -r eliobox
 rm eliobox.tar.gz
