@@ -179,7 +179,9 @@ angular.module('elioBoxClientApp')
       
     function goBack(){
         if (typeof localStream != 'undefined'){
-            localStream.close();
+            localStream.getTracks().forEach(function(track){
+                track.stop();
+            });
         }
         ws.close();
         $window.location.href='#/';

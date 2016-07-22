@@ -9,6 +9,10 @@
  */
 angular.module('elioBoxClientApp')
   .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", function ($websocket, $rootScope,$timeout,$route) {
+      
+      var onLoad = function(){console.log('image loaded');};
+      
+      
     $rootScope.loading=true;
     $rootScope.status="Chargement en cours ...";
       
@@ -35,6 +39,15 @@ angular.module('elioBoxClientApp')
     autoReconnectWebsocket('ws://localhost:8888/ws-refresh', function(event) {
         console.info(JSON.parse(event.data)['files']);
         $rootScope.currentPhotos=JSON.parse(event.data)['files'];
+        
+        $rootScope.currentPhotos.forEach(function (photo){
+            var my_image = new Image();
+            my_image.onload=onLoad;
+            my_image.src=photo.file;
+            var my_image_thumb = new Image();
+            my_image_thumb.onload=onLoad;
+            my_image_thumb.src=photo.thumbnail;
+        })
     });
     
     autoReconnectWebsocket('ws://localhost:8888/ws-cec', function(event) {

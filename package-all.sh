@@ -1,2 +1,2 @@
-./package $1 $2
-./package-sig $1 $2
+./package.sh $1 $2
+./package-signaling.sh $1 $2
