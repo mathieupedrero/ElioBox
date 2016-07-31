@@ -8,7 +8,7 @@
  * Controller of the elioBoxClientApp
  */
 angular.module('elioBoxClientApp')
-  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", function ($websocket, $rootScope,$timeout,$route) {
+  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", "$window", function ($websocket, $rootScope,$timeout,$route,$window) {
       
       var onLoad = function(){console.log('image loaded');};
       
@@ -39,15 +39,6 @@ angular.module('elioBoxClientApp')
     autoReconnectWebsocket('ws://localhost:8888/ws-refresh', function(event) {
         console.info(JSON.parse(event.data)['files']);
         $rootScope.currentPhotos=JSON.parse(event.data)['files'];
-        
-        $rootScope.currentPhotos.forEach(function (photo){
-            var my_image = new Image();
-            my_image.onload=onLoad;
-            my_image.src=photo.file;
-            var my_image_thumb = new Image();
-            my_image_thumb.onload=onLoad;
-            my_image_thumb.src=photo.thumbnail;
-        })
     });
     
     autoReconnectWebsocket('ws://localhost:8888/ws-cec', function(event) {
@@ -55,7 +46,7 @@ angular.module('elioBoxClientApp')
             console.log("connected to WS server :"+event.data);
             if (event.data != build_tag){
                 console.log("Tags not matching !! Expected ["+build_tag+"], currently ["+event.data+"]");
-                $route.reload(true);
+                $window.location.reload(true);
             }else{
                 console.log("tags matching");
             }

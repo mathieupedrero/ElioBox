@@ -240,7 +240,6 @@ console.log("chat v1.2");
             logStreaming(true);
             $('#chatLabel').text=chatStatus="";
             $('#chatStatus').visible=true;
-            $scope.$apply();
             console.log("finally connected !!");
         };
         pc.onicecandidate = function(event) {

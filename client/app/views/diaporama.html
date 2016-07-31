@@ -1,7 +1,8 @@
-  <!-- Wrapper for slides -->
-  <uib-carousel active="0" interval="7000" no-wrap="false" template-url="views/slideshow.html">
-    <uib-slide ng-repeat="photo in currentPhotos track by photo.id" index="photo.id"  >
-        <div class="mpo-photo-outer" style="background-image:url('{{photo.thumbnail}}');"></div>
-        <div class="fill mpo-photo-inner" style="background-image:url('{{photo.file}}');"/></div>
-    </uib-slide>
-  </uib-carousel>
+<div id="photo-parent">
+    <div class="fill mpo-photo-outer" ng-style="outerStyle[0]" ng-show="visible[0]"></div>
+    <div class="fill mpo-photo-inner" ng-style="innerStyle[0]" ng-show="visible[0]"></div>
+    <div class="fill mpo-photo-outer" ng-style="outerStyle[1]" ng-show="visible[1]"></div>
+    <div class="fill mpo-photo-inner" ng-style="innerStyle[1]" ng-show="visible[1]"></div>
+    <div class="fill mpo-photo-outer" ng-style="outerStyle[2]" ng-show="visible[2]"></div>
+    <div class="fill mpo-photo-inner" ng-style="innerStyle[2]" ng-show="visible[2]"></div>
+</div>

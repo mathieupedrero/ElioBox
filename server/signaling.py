@@ -19,6 +19,20 @@ class Room(object):
     def __repr__(self):
         return self.name
 
+ 
+class StatusHandler(RequestHandler):
+    def get(self):
+        rooms_response=dict()
+        for name,room in global_rooms.items():
+            room_response=dict()
+            room_response['name']=name
+            room_clients=[];
+            for client in room.clients:
+                room_clients.append(client.request.remote_ip)
+            room_response['clients']=room_clients
+            rooms_response[name]=room_response
+        response = { 'rooms':rooms_response} 
+        self.write(response)
 
 
 class EchoWebSocket(WebSocketHandler):
@@ -61,6 +75,7 @@ def main():
 
     application = Application([
         (r'/ws/([^/]*)', EchoWebSocket),
+        (r'/status', StatusHandler)
     ], **settings)
 
     application.listen(address='0.0.0.0', port=2323)
