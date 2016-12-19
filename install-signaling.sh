@@ -19,7 +19,7 @@ cd ..
 tar zcvf eliobox-sig.tar.gz eliobox-sig
 scp -P $port eliobox-sig.tar.gz $1:~
 scp -P $port deployonpi-sig.sh $1:~
-ssh -p $port $1 "deployonpi-sig.sh $serv"
+ssh -t -p $port $1 "sudo ./deployonpi-sig.sh $serv"
 rm -r eliobox-sig
 rm eliobox-sig.tar.gz
 

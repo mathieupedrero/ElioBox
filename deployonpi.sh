@@ -5,20 +5,20 @@ else
         serv=$1
 fi
 tar zxvf eliobox.tar.gz
-if [ $serv = 'sd']
+if [ $serv = "sd"]
 then
-        sudo systemctl stop eliobox-server.service
+        systemctl stop eliobox-server.service
 else
-        sudo service eliobox-server stop
+        service eliobox-server stop
 fi
 rm -rf /opt/eliobox/dist
 mv eliobox/dist /opt/eliobox 
 mv eliobox/server.py /opt/eliobox-server
-if [ $serv = 'sd']
+if [ $serv = "sd"]
 then
-        sudo systemctl start eliobox-server.service
+        systemctl start eliobox-server.service
 else
-        sudo service eliobox-server start
+        service eliobox-server start
 fi
 rm -r eliobox
 rm eliobox.tar.gz

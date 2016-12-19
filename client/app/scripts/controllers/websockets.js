@@ -8,8 +8,8 @@
  * Controller of the elioBoxClientApp
  */
 angular.module('elioBoxClientApp')
-  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", "$window", function ($websocket, $rootScope,$timeout,$route,$window) {
-      
+  .controller('WebsocketsCtrl', ['$websocket', '$rootScope' , '$timeout' , "$route", "$window", "$http", function ($websocket, $rootScope, $timeout, $route, $window, $http) {
+       
       var onLoad = function(){console.log('image loaded');};
       
       
@@ -57,5 +57,10 @@ angular.module('elioBoxClientApp')
             }
         }
     });
+      
+      $http.get('http://localhost/constants').
+        then(function(response) {
+            $rootScope.constants = response.data;
+        });
       
   }]);

@@ -7,18 +7,24 @@ import uuid
 from tornado.ioloop import IOLoop
 from tornado.web import Application, RequestHandler
 from tornado.websocket import WebSocketHandler
+from tornado.escape import json_encode
+from tornado.escape import json_decode
+
 
 global_rooms = {}
 
+audio_tag="audio"
+video_tag="video"
+feed_url="http://pedrero.org:2121/feed-{0}-{1}.ffm"
+available_ids = {1,2}
 
 class Room(object):
-    def __init__(self, name, clients=[]):
+    def __init__(self, name, clients={}):
         self.name = name
         self.clients = clients
 
     def __repr__(self):
         return self.name
-
  
 class StatusHandler(RequestHandler):
     def get(self):
@@ -32,41 +38,53 @@ class StatusHandler(RequestHandler):
             room_response['clients']=room_clients
             rooms_response[name]=room_response
         response = { 'rooms':rooms_response} 
-        self.write(response)
-
+        self.write(json_encode(response))
 
 class EchoWebSocket(WebSocketHandler):
     def check_origin(self, origin):
         return True
 
     def open(self, slug):
-        if slug in global_rooms:
-            global_rooms[slug].clients.append(self)
+        if available_ids:
+            self.stream_id=available_ids.pop()
+            config={
+                'name':'Invité',
+                'ws':self
+            }
+            if slug in global_rooms:
+                global_rooms[slug].clients[stream_id]=config
+            else:
+                global_rooms[slug] = Room(slug, config)
+            self.this_room=global_rooms[slug]
+            response={
+                'id':self.stream_id,
+                'audio-feed':feed_url.format(audio_tag,stream_id),
+                'video-feed':feed_url.format(video_tag,stream_id)
+            }
+            self.write_message(json_encode(response))
         else:
-            global_rooms[slug] = Room(slug, [self])
-        self.room = global_rooms[slug]
-        if len(self.room.clients) > 2:
-            self.write_message('fullhouse')
-        elif len(self.room.clients) == 1:
-            self.write_message('initiator')
-        else:
-            self.write_message('not initiator')
+            self.close(reason='full_house')
         logging.info(
             'WebSocket connection opened from %s', self.request.remote_ip)
 
     def on_message(self, message):
+        self.this_room.clients[self.stream_id]['name']=message
+        self.refresh_others()
         logging.info(
             'Received message from %s: %s', self.request.remote_ip, message)
-        for client in self.room.clients:
-            if client is self:
-                continue
-            client.write_message(message)
 
     def on_close(self):
         logging.info('WebSocket connection closed.')
-        self.room.clients.remove(self)
-        for client in self.room.clients:
-            client.write_message('initiator')
+        del self.this_room.clients[self.stream_id]
+        available_ids.add(self.stream_id)
+        self.refresh_others()
+
+    def refresh_others(self):
+        client_descs_by_id = map( lambda id,config : id,{'id':id,'name':config['name']}, self.this_room.clients.items())
+        for client_id,client_config in self.this_room.clients.items():
+            other_clients=map(lambda id,desc: desc,filter(lambda id,desc : id != client_id,client_descs_by_id))
+            client_config['ws'].write_message(json_encode({'connected-clients':other_clients}))
+        
 
 def main():
     settings = dict(

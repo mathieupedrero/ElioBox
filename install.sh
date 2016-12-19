@@ -44,6 +44,6 @@ cd ..
 tar zcvf eliobox.tar.gz eliobox
 scp -P $port eliobox.tar.gz $1:~
 scp -P $port deployonpi.sh $1:~
-ssh -p $port $1 "deployonpi.sh $serv"
+ssh -t -p $port $1 "sudo ./deployonpi.sh $serv"
 rm -r eliobox
 rm eliobox.tar.gz
